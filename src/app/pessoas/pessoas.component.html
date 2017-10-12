@@ -1,0 +1,280 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-messages [(value)]="msgs"></p-messages>
+      <p-confirmDialog header="Confirmação" icon="fa fa-question-circle"></p-confirmDialog>
+      <p-panel>
+        <p-header>
+          <div class="ui-g-12 ui-md-8">
+            <!--h2><strong>{{tipoEntidade.nome}}</strong></h2-->
+            <label><strong>{{tipoEntidade.nome}}</strong></label>
+          </div>
+          <!--div class="ui-g-12 ui-md-2">
+            <label><strong>Quantidade p/ pagina:</strong></label>
+          </div -->
+          <!--div class="ui-g-12 ui-md-2">
+            <p-dropdown [options]="gridPaginador" [(ngModel)]="selectedQtdPaginas"></p-dropdown>
+          </div -->
+        </p-header>
+        <div class="card card-w-title">
+          <div class="ui-g">
+
+            <p-tabView [activeIndex]="[(index)]" (onChange)="handleChange($event)">
+              <p-tabPanel [disabled]="isNovoregistro" header="Lista de {{tipoEntidade.alias}}" leftIcon="fa-address-card-o">
+                <p-dataTable [value]="gridPessoas" selectionMode="single" scrollable="true" [paginator]="true" [rowsPerPageOptions]="[5,10,20,50]" [rows]="[(selectedQtdPaginas)]"
+                  [responsive]="true">
+                  <p-header>
+
+                  </p-header>
+                  <p-column [style]="{'width':'10%'}" field="identidade" header="Id" [sortable]="true"></p-column>
+                  <p-column [style]="{'width':'40%'}" field="nome" header="Nome" [sortable]="true"></p-column>
+                  <p-column [style]="{'width':'15%'}" field="tipoPessoa.nome" header="Pessoa" [sortable]="true"></p-column>
+                  <p-column [style]="{'width':'15%'}" field="celular" header="Celular" [sortable]="true"></p-column>
+                  <p-column [style]="{'width':'7%'}" styleClass="col-button">
+                    <ng-template pTemplate="header">
+                      <button type="button" pButton icon="fa-edit"></button>
+                    </ng-template>
+                    <ng-template let-gridPessoas="rowData" pTemplate="body">
+                      <button type="button" pButton (click)="selectPesssoa(gridPessoas)" icon="fa-pencil-square-o"></button>
+                    </ng-template>
+                  </p-column>
+                  <p-column [style]="{'width':'7%'}" styleClass="col-button">
+                    <ng-template pTemplate="header">
+                      <button type="button" pButton icon="fa-camera-retro"></button>
+                    </ng-template>
+                    <ng-template let-gridPessoas="rowData" pTemplate="body">
+                      <button type="button" pButton (click)="selectPesssoaForView(gridPessoas)" icon="fa-camera-retro"></button>
+                    </ng-template>
+                  </p-column>
+                  <p-column [style]="{'width':'7%'}" styleClass="col-button">
+                    <ng-template pTemplate="header">
+                      <button type="button" pButton icon="fa-times"></button>
+                    </ng-template>
+                    <ng-template let-gridPessoas="rowData" pTemplate="body">
+                      <button type="button" pButton (click)="confirmaExclusao(gridPessoas)" icon="fa-times"></button>
+                    </ng-template>
+                  </p-column>
+                </p-dataTable>
+                <br/>
+              </p-tabPanel>
+              <p-tabPanel header="{{tipoEntidade.singular}}: {{ (pessoaSelecionada !=null) ? pessoaSelecionada.nome : ''}} " leftIcon="fa-user-o">
+
+                <!-- Inicio do Formulario -->
+                <form [formGroup]="formPessoas">
+                  <!-- (Inicio) Header - cadastro -->
+                  <div class="ui-g-12 ui-md-8">
+                    <div class="ui-g-12 ui-md-12" *ngIf="(!isNovoregistro)">
+                      <label><strong>{{tipoEntidade.singular}}</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-2" *ngIf="(!isNovoregistro)">
+                      <input id="input" type="text" [readonly]="true" pInputText class="ng-invalid" [value] = "formPessoas.get('identidade').value"/>
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-3">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Tipo Pessoa:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12" style="text-align:right">
+                      <p-selectButton [options]="gridTipoPessoa" class="ng-invalid" [readonly]="isAtivo" formControlName="tbtipopessoaIdtipopessoa"></p-selectButton>
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-1">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Ativo:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <p-inputSwitch onLabel="Sim" offLabel="Não" [readonly]="isAtivo" class="ng-invalid" formControlName="isativo"></p-inputSwitch>
+                    </div>
+                  </div>
+                  <!-- (Fim) Header - cadastro -->
+
+                  <!-- (Inicio) Coluna 1 - cadastro -->
+                  <div class="ui-g-12 ui-md-6">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Nome:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input id="input" type="text" pInputText [readonly]="isAtivo" class="ng-dirty ng-invalid" formControlName="nome" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-3">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Nome Abrev.:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input pInputText type="text" pInputText [readonly]="isAtivo" class="ng-dirty ng-invalid" formControlName="abvnome" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Cep:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <p-inputMask formControlName="cep" class="ng-invalid" [readonly]="isAtivo" mask="99999?-999" (onBlur)="consultaCEP()"></p-inputMask>
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-1">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Numero:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input id="input" type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="numero" />
+                    </div>
+                  </div>
+                  <!-- (Fim) Coluna 1 - cadastro -->
+
+                  <!-- (Inicio) Coluna 2 - cadastro -->
+
+
+                  <!-- (Fim) Coluna 1 - cadastro -->
+
+                  <!-- (Inicio) Coluna 2 - cadastro -->
+                  <div class="ui-g-12 ui-md-4">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Endereco:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input id="input" type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="endereco" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Bairro:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input id="input" type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="bairro" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Complemento:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input pInputText type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="complemento" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-1">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Estado:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input pInputText type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="idestado" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-3">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Cidade</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input pInputText type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="cidade" />
+                    </div>
+                  </div>
+                  <!-- (Fim) Coluna 2 - cadastro -->
+
+                  <!-- (Inicio) Coluna 3 - cadastro -->
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>{{(formPessoas.get('tbtipopessoaIdtipopessoa').value==1) ? 'CPF:' : 'CNPJ:'}}</strong></label>
+                    </div>
+                    <div *ngIf="(formPessoas.get('tbtipopessoaIdtipopessoa').value==1)" class="ui-g-12 ui-md-12">
+                      <p-inputMask formControlName="cpf" class="ng-invalid" [readonly]="isAtivo" mask="999.999.999-99" (onBlur)="validaCpf()"></p-inputMask>
+                    </div>
+                    <div *ngIf="(formPessoas.get('tbtipopessoaIdtipopessoa').value!=1)" class="ui-g-12 ui-md-12">
+                      <p-inputMask formControlName="cpf" class="ng-invalid" [readonly]="isAtivo" mask="99.999.999/9999-99" (onBlur)="validaCnpj()"></p-inputMask>
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>{{(formPessoas.get('tbtipopessoaIdtipopessoa').value==1) ? 'RG:' : 'Insc. Estadual:'}}</strong></label>
+                    </div>
+                    <div *ngIf="(formPessoas.get('tbtipopessoaIdtipopessoa').value==1)" class="ui-g-12 ui-md-12">
+                      <p-inputMask formControlName="rg" class="ng-dirty ng-invalid" [readonly]="isAtivo" mask="9.999.999?-*"></p-inputMask>
+                    </div>
+                    <div *ngIf="(formPessoas.get('tbtipopessoaIdtipopessoa').value!=1)" class="ui-g-12 ui-md-12 ">
+                      <input formControlName="rg" pInputText type="text" pInputText class="ng-dirty ng-invalid" [readonly]="isAtivo" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Telefone:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <p-inputMask formControlName="telefone" class="ng-invalid" [readonly]="isAtivo" mask="(99) 9999-999"></p-inputMask>
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Celular:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <p-inputMask formControlName="celular" class="ng-invalid" [readonly]="isAtivo" mask="(99) 99999-999"></p-inputMask>
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-4">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Contato de Recado:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <input pInputText type="text" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="recado" />
+                    </div>
+                  </div>
+                  <!-- (Fim) Coluna 3 - cadastro -->
+
+                  <!-- (Inicio) Coluna 4 - cadastro -->
+                  <div class="ui-g-12 ui-md-10">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Email:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-6">
+                      <input id="input" type="email" pInputText class="ng-invalid" [readonly]="isAtivo" formControlName="email" />
+                    </div>
+                  </div>
+                  <div class="ui-g-12 ui-md-2">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Data Nascimento:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <!--input pInputText type="text" pInputText placeholder="Data Nascimento" formControlName="dtnascimento" /-->
+                      <p-inputMask mask="99/99/9999" [(ngModel)]="dataNascimento" class="ng-invalid" name="dataNascimento" (onBlur)="sincronizaDataNascimento()"
+                        required [ngModelOptions]="{standalone: true}" slotChar="dd/mm/yyyy" [readonly]="isAtivo"></p-inputMask>
+                    </div>
+                  </div>
+                  <!-- (Fim) Coluna 4 - cadastro -->
+                  <div class="ui-g-12 ui-md-12">
+                    <div class="ui-g-12 ui-md-12">
+                      <label><strong>Observação:</strong></label>
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                      <textarea [rows]="2" [cols]="40" pInputTextarea class="ng-invalid" [readonly]="isAtivo" placeholder="Observação" autoResize="autoResize"
+                        formControlName="obs"></textarea>
+                    </div>
+                  </div>
+                  <!-- (Fim) Coluna 5 - cadastro -->
+                  <div class="ui-g-12 ui-md-12">
+                    <div class="ui-g-12 ui-md-2" *ngIf="(!isAtivo)">
+                      <button type="button" label="Salvar registro" (click)="onSubmit()" pButton></button>
+                    </div>
+                    <div class="ui-g-12 ui-md-2">
+                      <button type="button" label="Cancelar" (click)="btnConacelar()" pButton></button>
+                    </div>
+                  </div>
+                </form>
+
+              </p-tabPanel>
+            </p-tabView>
+            <div class="ui-g-12 ui-md-10">
+
+            </div>
+            <div *ngIf="(!isNovoregistro)" class="ui-g-12 ui-md-2">
+              <div class="ui-g-12 ui-md-12">
+                <button type="button" label="Novo registro" (click)="btnNovo()"pButton></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--p-footer>
+        </p-footer-->
+      </p-panel>
+    </div>
+  </div>
+</div>

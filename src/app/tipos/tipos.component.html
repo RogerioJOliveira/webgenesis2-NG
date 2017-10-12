@@ -1,0 +1,60 @@
+<div class="ui-g-12">
+  <p-messages [(value)]="msgs"></p-messages>
+  <p-confirmDialog header="Confirmação" icon="fa fa-question-circle"></p-confirmDialog>
+  <div class="ui-g-12">
+    <button type="button" label="Novo" icon="fa-plus" (click)="btnNovo()" pButton></button>
+  </div>
+  <div class="ui-g-12 ui-md-4 ui-lg-4 ui-fluid">
+    <p-panel header="Lista {{menutipo.alias}}" [style]="{'minHeight':'360px'}">
+      <p-dataList [value]="listaTipos" [paginator]="true" [rows]="5" (onPage)="myloadData($event)">
+        <ng-template let-listaTipos let-i="index" pTemplate="item">
+          <p-toolbar>
+            <div class="ui-g-8 ui-sm-6">
+              <span type="button" icon="fa-search">{{listaTipos.id}} - {{listaTipos.nome}}</span>
+            </div>
+            <div class="ui-g-2 ui-sm-6">
+              <button type="button" pButton icon="fa-search" (click)="selectTiposForView(i)" style="margin:0px 0px 0 0;float:right"></button>
+            </div>
+            <div class="ui-g-2 ui-sm-6">
+              <button type="button" pButton icon="fa-edit" (click)="selectTipos(i)" style="margin:0px 0px 0 0;float:right"></button>
+            </div>
+            <hr>
+          </p-toolbar>
+        </ng-template>
+      </p-dataList>
+    </p-panel>
+  </div>
+  <div class="ui-g-12 ui-md-6 ui-lg-4 ui-fluid contact-form">
+    <form [formGroup]="formTipos">
+      <p-panel header="{{menutipo.nome}}" [style]="{'minHeight':'360px'}">
+        <div class="ui-g">
+          <div class="ui-g-12 ui-md-2">
+            <input type="text" pInputText placeholder="id" [readonly]="true" formControlName="id" pTooltip="Numero identificador do tipo">
+          </div>
+          <div class="ui-g-12">
+            <input type="text" pInputText placeholder="Nome" [readonly]="isAtivo" formControlName="nome" pTooltip="Digite o nome do tipo">
+          </div>
+          <div class="ui-g-12">
+            <input type="text" pInputText placeholder="Nome Abreviado" [readonly]="isAtivo" formControlName="alias" pTooltip="Digite o nome abreviado do tipo">
+          </div>
+          <div class="ui-g-6 ui-sm-6" *ngIf="(menutipo.isAtivo)">
+            <p-inputSwitch onLabel="Sim" offLabel="Não" pTooltip="Ativo Sim/Não" class="ng-invalid" formControlName="isativo"></p-inputSwitch>
+          </div>
+          <div class="ui-g-6 ui-sm-6" *ngIf="(menutipo.isTravado)">
+            <p-inputSwitch onLabel="Sim" offLabel="Não" pTooltip="Default Sim/Não" class="ng-invalid" formControlName="istravado"></p-inputSwitch>
+          </div>
+        </div>
+        <button *ngIf="(!isAtivo)" type="button" label="Salvar" (click)="onSubmit($event)" pButton></button>
+        <button *ngIf="(!isAtivo)" type="button" label="Excluir" (click)="confirmaExclusao()" pButton></button>
+      </p-panel>
+    </form>
+  </div>
+</div>
+<div class="ui-g-12 ui-md-12 ui-lg-12 ui-fluid">
+  <div style="margin-top: 20px" *ngIf="formTipos">
+    <div>Detalhes do form</div>
+    <pre>Form válido: {{ formTipos.valid }}</pre>
+    <!--pre>Form submetido: {{ form.submitted }}</pre -->
+    <pre>Valores: <br>{{ formTipos.value | json }}</pre>
+  </div>
+</div>
